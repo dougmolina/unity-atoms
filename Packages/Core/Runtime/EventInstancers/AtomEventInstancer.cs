@@ -22,6 +22,7 @@ namespace UnityAtoms
         /// Getter for retrieving the in memory runtime Event.
         /// </summary>
         public E Event { get => _inMemoryCopy; }
+        public E Base { get => _base; }
 
         [SerializeField]
         [ReadOnly]
@@ -46,7 +47,7 @@ namespace UnityAtoms
             {
                 _inMemoryCopy = ScriptableObject.CreateInstance<E>();
             }
-            else if(_inMemoryCopy == null)
+            else if (_inMemoryCopy == null)
             {
                 _inMemoryCopy = Instantiate(_base);
             }

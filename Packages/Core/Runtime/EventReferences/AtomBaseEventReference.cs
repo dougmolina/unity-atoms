@@ -24,6 +24,7 @@ namespace UnityAtoms
         /// </summary>
         [SerializeField]
         protected int _usage;
+        public int Usage { get { return _usage; } }
     }
 
     /// <summary>
