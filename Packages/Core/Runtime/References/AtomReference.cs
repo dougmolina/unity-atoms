@@ -27,6 +27,7 @@ namespace UnityAtoms
         /// Get or set the value for the Reference.
         /// </summary>
         /// <value>The value of type `T`.</value>
+        
         public T Value
         {
             get
@@ -68,6 +69,18 @@ namespace UnityAtoms
         }
 
         /// <returns>True if the `Usage` is an AtomType and is unassigned. False otherwise.</returns>
+        
+        public T GetValue()
+        {
+            return Value;
+        }
+        
+        public void SetValue(T value)
+        {
+            _value = value;
+        }
+
+        
         public bool IsUnassigned
         {
             get

@@ -11,7 +11,7 @@ namespace UnityAtoms.Editor
     internal class Templating
     {
         /// <summary>
-        /// Resolve conditionals from the provided tempalte.
+        /// Resolve conditionals from the provided template.
         /// </summary>
         /// <param name="template">Template to resolve the conditionals from.</param>
         /// <param name="trueConditions">A list of conditionals that are `true`.</param>
