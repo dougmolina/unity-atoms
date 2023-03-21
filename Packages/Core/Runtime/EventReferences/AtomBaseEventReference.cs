@@ -80,6 +80,31 @@ namespace UnityAtoms
         [SerializeField]
         protected EI _eventInstancer = default(EI);
 
+        public EI GetInstance()
+        {
+            return _usage == AtomEventReferenceUsage.EVENT_INSTANCER ? _eventInstancer : null;
+        }
+
+        public void Raise()
+        {
+            if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
+            {
+                _eventInstancer.Base.Raise();
+            }
+            
+            Event.Raise();
+        }
+        
+        public void Raise(T value)
+        {
+            if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
+            {
+                _eventInstancer.Base.Raise(value);
+            }
+            
+            Event.Raise(value);
+        }
+
         protected AtomBaseEventReference()
         {
             _usage = AtomEventReferenceUsage.EVENT;
