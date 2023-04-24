@@ -23,7 +23,7 @@ namespace UnityAtoms
         /// <summary>
         /// Perform the Action.
         /// </summary>
-        /// <param name="t1">The first parameter.</param>
-        public virtual void Do(T1 t1) => base.Do();
+        /// <param name="value">The first parameter.</param>
+        public virtual void Do(T1 value) => base.Do();
     }
 }

@@ -58,15 +58,15 @@ namespace UnityAtoms
         /// <summary>
         /// Raise the Event.
         /// </summary>
-        /// <param name="item">The value associated with the Event.</param>
-        public void Raise(T item)
+        /// <param name="value">The value associated with the Event.</param>
+        public void Raise(T value)
         {
 #if !UNITY_ATOMS_GENERATE_DOCS && UNITY_EDITOR
-            StackTraces.AddStackTrace(GetInstanceID(), StackTraceEntry.Create(item));
+            StackTraces.AddStackTrace(GetInstanceID(), StackTraceEntry.Create(value));
 #endif
             base.Raise();
-            _onEvent?.Invoke(item);
-            AddToReplayBuffer(item);
+            _onEvent?.Invoke(value);
+            AddToReplayBuffer(value);
         }
 
         /// <summary>

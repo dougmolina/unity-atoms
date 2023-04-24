@@ -87,10 +87,10 @@ namespace UnityAtoms
         /// <summary>
         /// Raises the instanced Event.
         /// </summary>
-        /// <param name="item">The value associated with the Event.</param>
-        public void Raise(T item)
+        /// <param name="value">The value associated with the Event.</param>
+        public void Raise(T value)
         {
-            Event.Raise(item);
+            Event.Raise(value);
         }
     }
 }
