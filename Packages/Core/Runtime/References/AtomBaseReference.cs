@@ -39,5 +39,9 @@ namespace UnityAtoms
         /// </summary>
         [SerializeField]
         protected int _usage;
+
+        public virtual void SetReferenceValue(object value) { }
+
+        public virtual object GetReferenceValue() { return null; }
     }
 }
