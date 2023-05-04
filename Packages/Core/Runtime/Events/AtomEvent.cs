@@ -10,7 +10,7 @@ namespace UnityAtoms
     /// </summary>
     /// <typeparam name="T">The type for this Event.</typeparam>
     [EditorIcon("atom-icon-cherry")]
-    public class AtomEvent<T> : AtomEventBase
+    public class AtomEvent<T> : AtomEventBase, IValueCallable
     {
         public T InspectorRaiseValue { get => _inspectorRaiseValue; }
 
@@ -162,6 +162,11 @@ namespace UnityAtoms
                     enumerator.Dispose();
                 }
             }
+        }
+
+        public virtual void CallWithValue(object value)
+        {
+            Raise((T) value);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace UnityAtoms
     /// <typeparam name="E">Event of type T.</typeparam>
     [EditorIcon("atom-icon-sign-blue")]
     [DefaultExecutionOrder(Runtime.ExecutionOrder.VARIABLE_INSTANCER)]
-    public abstract class AtomEventInstancer<T, E> : AtomBaseEventInstancer, IGetEvent, ISetEvent
+    public abstract class AtomEventInstancer<T, E> : AtomBaseEventInstancer, IGetEvent, ISetEvent, IValueCallable
         where E : AtomEvent<T>
     {
         public T InspectorRaiseValue { get => _inspectorRaiseValue; }
@@ -91,6 +91,11 @@ namespace UnityAtoms
         public void Raise(T value)
         {
             Event.Raise(value);
+        }
+
+        public virtual void CallWithValue(object value)
+        {
+            Raise((T) value);
         }
     }
 }

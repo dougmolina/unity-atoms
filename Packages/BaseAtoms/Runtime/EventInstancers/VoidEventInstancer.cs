@@ -7,5 +7,16 @@ namespace UnityAtoms.BaseAtoms
     /// </summary>
     [EditorIcon("atom-icon-sign-blue")]
     [AddComponentMenu("Unity Atoms/Event Instancers/Void Event Instancer")]
-    public class VoidEventInstancer : AtomEventInstancer<Void, VoidEvent> { }
+    public class VoidEventInstancer : AtomEventInstancer<Void, VoidEvent>, ICallable
+    {
+        public override void CallWithValue(object value)
+        {
+            Call();
+        }
+
+        public void Call()
+        {
+            Raise();
+        }
+    }
 }

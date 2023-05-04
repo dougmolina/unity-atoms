@@ -8,7 +8,7 @@ namespace UnityAtoms
     /// None generic base class for Events. Inherits from `BaseAtom` and `ISerializationCallbackReceiver`.
     /// </summary>
     [EditorIcon("atom-icon-cherry")]
-    public abstract class AtomEventBase : BaseAtom, ISerializationCallbackReceiver
+    public abstract class AtomEventBase : BaseAtom, ISerializationCallbackReceiver, ICallable
     {
         /// <summary>
         /// Event without value.
@@ -82,5 +82,9 @@ namespace UnityAtoms
             }
         }
 
+        public void Call()
+        {
+            Raise();
+        }
     }
 }

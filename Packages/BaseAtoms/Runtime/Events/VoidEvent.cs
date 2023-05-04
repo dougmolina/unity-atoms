@@ -11,7 +11,12 @@ namespace UnityAtoms.BaseAtoms
     {
         public override void Raise()
         {
-            Raise(new Void());
+            Raise(new());
+        }
+
+        public override void CallWithValue(object value)
+        {
+            Raise();
         }
     }
 }
