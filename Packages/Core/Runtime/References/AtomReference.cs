@@ -200,5 +200,10 @@ namespace UnityAtoms
                     throw new Exception($"Can't set Event when usages is set to '{AtomReferenceUsage.DisplayName(_usage)}'! Usage needs to be set to '{AtomReferenceUsage.DisplayName(AtomReferenceUsage.VARIABLE)}' or '{AtomReferenceUsage.DisplayName(AtomReferenceUsage.VARIABLE_INSTANCER)}'.");
             }
         }
+
+        public override object GetReferenceValue()
+        {
+            return Value;
+        }
     }
 }

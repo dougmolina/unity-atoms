@@ -20,5 +20,6 @@ namespace UnityAtoms.BaseAtoms
         public FloatReference() : base() { }
         public FloatReference(float value) : base(value) { }
         public bool Equals(FloatReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (float) value; }
     }
 }

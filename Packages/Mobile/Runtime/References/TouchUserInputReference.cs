@@ -21,5 +21,6 @@ namespace UnityAtoms.Mobile
         public TouchUserInputReference() : base() { }
         public TouchUserInputReference(TouchUserInput value) : base(value) { }
         public bool Equals(TouchUserInputReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { throw new NotImplementedException(); }
     }
 }

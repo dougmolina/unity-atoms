@@ -21,5 +21,6 @@ namespace UnityAtoms.MonoHooks
         public CollisionGameObjectReference() : base() { }
         public CollisionGameObjectReference(CollisionGameObject value) : base(value) { }
         public bool Equals(CollisionGameObjectReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (CollisionGameObject) value; }
     }
 }

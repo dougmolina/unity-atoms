@@ -49,5 +49,9 @@ namespace UnityAtoms.FSM
         /// </summary>
         [SerializeField]
         private FiniteStateMachineInstancer _fsmInstancer = default(FiniteStateMachineInstancer);
+
+        public override void SetReferenceValue(object value) { throw new NotImplementedException(); }
+
+        public override object GetReferenceValue() { throw new NotImplementedException(); }
     }
 }

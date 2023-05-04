@@ -20,5 +20,6 @@ namespace UnityAtoms.BaseAtoms
         public DoubleReference() : base() { }
         public DoubleReference(double value) : base(value) { }
         public bool Equals(DoubleReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (double) value; }
     }
 }

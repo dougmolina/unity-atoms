@@ -21,5 +21,6 @@ namespace UnityAtoms.BaseAtoms
         public Vector3Reference() : base() { }
         public Vector3Reference(Vector3 value) : base(value) { }
         public bool Equals(Vector3Reference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (Vector3) value; }
     }
 }

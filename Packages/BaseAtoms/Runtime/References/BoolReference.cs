@@ -20,5 +20,6 @@ namespace UnityAtoms.BaseAtoms
         public BoolReference() : base() { }
         public BoolReference(bool value) : base(value) { }
         public bool Equals(BoolReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (bool) value; }
     }
 }

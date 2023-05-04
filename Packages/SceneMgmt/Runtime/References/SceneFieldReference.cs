@@ -21,5 +21,6 @@ namespace UnityAtoms.SceneMgmt
         public SceneFieldReference() : base() { }
         public SceneFieldReference(SceneField value) : base(value) { }
         public bool Equals(SceneFieldReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { throw new NotImplementedException(); }
     }
 }

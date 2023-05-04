@@ -20,5 +20,6 @@ namespace UnityAtoms.BaseAtoms
         public StringReference() : base() { }
         public StringReference(string value) : base(value) { }
         public bool Equals(StringReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (string) value; }
     }
 }

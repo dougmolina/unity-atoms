@@ -54,5 +54,9 @@ namespace UnityAtoms.BaseAtoms
         /// </summary>
         [SerializeField]
         private AtomListInstancer _instancer = default(AtomListInstancer);
+
+        public override void SetReferenceValue(object value) { throw new NotImplementedException(); }
+
+        public override object GetReferenceValue() { throw new NotImplementedException(); }
     }
 }

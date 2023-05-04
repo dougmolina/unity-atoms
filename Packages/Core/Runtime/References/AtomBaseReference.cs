@@ -6,7 +6,7 @@ namespace UnityAtoms
     /// <summary>
     /// Different Reference usages.
     /// </summary>
-    public class AtomReferenceUsage
+    public abstract class AtomReferenceUsage
     {
         public const int VALUE = 0;
         public const int CONSTANT = 1;
@@ -40,8 +40,8 @@ namespace UnityAtoms
         [SerializeField]
         protected int _usage;
 
-        public virtual void SetReferenceValue(object value) { }
+        public abstract void SetReferenceValue(object value);
 
-        public virtual object GetReferenceValue() { return null; }
+        public abstract object GetReferenceValue();
     }
 }

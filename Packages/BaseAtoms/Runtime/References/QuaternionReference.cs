@@ -21,5 +21,6 @@ namespace UnityAtoms.BaseAtoms
         public QuaternionReference() : base() { }
         public QuaternionReference(Quaternion value) : base(value) { }
         public bool Equals(QuaternionReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (Quaternion) value; }
     }
 }

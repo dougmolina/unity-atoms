@@ -32,5 +32,6 @@ namespace UnityAtoms.BaseAtoms
         /// </summary>
         /// <param name="variable">New alpha Variable value.</param>
         public void SetAlpha(AtomBaseVariable<float> variable) => SetAlpha(variable.Value);
+        public override void SetReferenceValue(object value) { Value = (Color) value; }
     }
 }

@@ -20,5 +20,6 @@ namespace UnityAtoms.BaseAtoms
         public IntReference() : base() { }
         public IntReference(int value) : base(value) { }
         public bool Equals(IntReference other) { return base.Equals(other); }
+        public override void SetReferenceValue(object value) { Value = (int) value; }
     }
 }
