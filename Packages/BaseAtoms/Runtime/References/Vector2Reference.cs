@@ -22,7 +22,7 @@ namespace UnityAtoms.BaseAtoms
         public bool Equals(Vector2Reference other) { return base.Equals(other); }
         public override void SetReferenceValue(object value)
         {
-            Value = value == default ? default : (Vector2)value;
+            Value = value == null ? default : (Vector2)value;
         }
     }
 }
