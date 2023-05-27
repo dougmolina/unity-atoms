@@ -47,8 +47,10 @@ namespace UnityAtoms
             {
                 switch (_usage)
                 {
-                    case (AtomEventReferenceUsage.EVENT_INSTANCER): return _eventInstancer.Event;
-                    case (AtomEventReferenceUsage.EVENT):
+                    case AtomEventReferenceUsage.EVENT_INSTANCER:
+                        return _eventInstancer.Event;
+
+                    case AtomEventReferenceUsage.EVENT:
                     default:
                         return _event;
                 }
@@ -57,11 +59,12 @@ namespace UnityAtoms
             {
                 switch (_usage)
                 {
-                    case (AtomEventReferenceUsage.EVENT):
-                        {
-                            _event = value;
-                            break;
-                        }
+                    case AtomEventReferenceUsage.EVENT:
+                    {
+                        _event = value;
+                        break;
+                    }
+
                     default:
                         throw new NotSupportedException($"Event not reassignable for usage {_usage}.");
                 }
@@ -72,13 +75,13 @@ namespace UnityAtoms
         /// Event used if `Usage` is set to `Event`.
         /// </summary>
         [SerializeField]
-        protected E _event = default(E);
+        protected E _event;
 
         /// <summary>
         /// EventInstancer used if `Usage` is set to `EventInstancer`.
         /// </summary>
         [SerializeField]
-        protected EI _eventInstancer = default(EI);
+        protected EI _eventInstancer = default;
 
         public EI GetInstance()
         {
@@ -89,20 +92,20 @@ namespace UnityAtoms
         {
             if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
             {
-                _eventInstancer.Base.Raise();
+                _eventInstancer?.Base?.Raise();
             }
-            
-            Event.Raise();
+
+            Event?.Raise();
         }
-        
+
         public void Raise(T value)
         {
             if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
             {
-                _eventInstancer.Base.Raise(value);
+                _eventInstancer?.Base?.Raise(value);
             }
-            
-            Event.Raise(value);
+
+            Event?.Raise(value);
         }
 
         protected AtomBaseEventReference()
@@ -110,7 +113,7 @@ namespace UnityAtoms
             _usage = AtomEventReferenceUsage.EVENT;
         }
 
-        public static implicit operator E(AtomBaseEventReference<T, E, EI> reference)
+        static public implicit operator E(AtomBaseEventReference<T, E, EI> reference)
         {
             return reference.Event;
         }
@@ -120,28 +123,29 @@ namespace UnityAtoms
         /// </summary>
         /// <typeparam name="E"></typeparam>
         /// <returns>The event.</returns>
-        public EO GetEvent<EO>() where EO : AtomEventBase
+        public EO GetEvent<EO>()
+            where EO : AtomEventBase
         {
-            if (typeof(EO) == typeof(E))
-                return (Event as EO);
+            if (typeof(EO) == typeof(E)) return Event as EO;
 
-            throw new Exception($"Event type {typeof(EO)} not supported! Use {typeof(E)}.");
+            throw new($"Event type {typeof(EO)} not supported! Use {typeof(E)}.");
         }
 
         /// <summary>
-        /// Set event by type. 
+        /// Set event by type.
         /// </summary>
         /// <param name="e">The new event value.</param>
         /// <typeparam name="E"></typeparam>
-        public void SetEvent<EO>(EO e) where EO : AtomEventBase
+        public void SetEvent<EO>(EO e)
+            where EO : AtomEventBase
         {
             if (typeof(EO) == typeof(E))
             {
-                Event = (e as E);
+                Event = e as E;
                 return;
             }
 
-            throw new Exception($"Event type {typeof(EO)} not supported! Use {typeof(E)}.");
+            throw new($"Event type {typeof(EO)} not supported! Use {typeof(E)}.");
         }
     }
 }
