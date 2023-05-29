@@ -48,19 +48,19 @@ namespace UnityAtoms.Editor
         );
         // BASE_EVENT_REFERENCE_LISTENER is only used in thoses cases where a Variable does not make sense, eg. Void.
         public static readonly AtomType BASE_EVENT_REFERENCE_LISTENER = new AtomType(
-            displayName: "Base Event Reference Listener",
-            templateName: "UA_Template__BaseEventReferenceListener.txt"
+            displayName: "Base Event Listener",
+            templateName: "UA_Template__BaseEventListener.txt"
         );
         public static readonly AtomType EVENT_REFERENCE_LISTENER = new AtomType(
-            displayName: "Event Reference Listener",
-            templateName: "UA_Template__EventReferenceListener.txt"
+            displayName: "Event Listener",
+            templateName: "UA_Template__EventListener.txt"
         );
         public static readonly AtomType PAIR_EVENT_REFERENCE_LISTENER = new AtomType(
-            displayName: "Pair Event Reference Listener",
-            name: "EventReferenceListener",
-            templateName: "UA_Template__EventReferenceListener.txt"
+            displayName: "Pair Event Listener",
+            name: "EventListener",
+            templateName: "UA_Template__EventListener.txt"
         );
-        // EVENT_LISTENER is only used in thoses cases where a Event Reference listener does not make sense, eg. AtomBaseVariable.
+        // EVENT_LISTENER is only used in thoses cases where a Event Listener does not make sense, eg. AtomBaseVariable.
         public static readonly AtomType EVENT_LISTENER = new AtomType(
             displayName: "Event Listener",
             name: "EventListener",
