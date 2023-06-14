@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace UnityAtoms.Editor
 {
-    public abstract class VariableDrawer<T> : AtomDrawer<T> where T : ScriptableObject
+    public abstract class VariableDrawer<T> : AtomDrawer<T>
+        where T : ScriptableObject
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            if (property.serializedObject.isEditingMultipleObjects
-             || property.objectReferenceValue == null)
+            if (property.serializedObject.isEditingMultipleObjects || property.objectReferenceValue == null)
             {
                 base.OnGUI(position, property, label);
                 return;
@@ -17,10 +17,10 @@ namespace UnityAtoms.Editor
             label = EditorGUI.BeginProperty(position, label, property);
             position = EditorGUI.PrefixLabel(position, label);
 
-            var inner = new SerializedObject(property.objectReferenceValue);
-            var valueProp = inner.FindProperty("_value");
-            var width = GetPreviewSpace(valueProp.type);
-            Rect previewRect = new Rect(position);
+            SerializedObject inner = new SerializedObject(property.objectReferenceValue);
+            SerializedProperty valueProp = inner.FindProperty("_value");
+            float width = GetPreviewSpace(valueProp.type);
+            Rect previewRect = new(position);
             previewRect.width = GetPreviewSpace(valueProp.type);
             position.xMin = previewRect.xMax;
 
@@ -46,8 +46,9 @@ namespace UnityAtoms.Editor
                 case "Vector2":
                 case "Vector3":
                     return 128;
+
                 default:
-                    return 58;
+                    return 100;
             }
         }
     }
