@@ -14,5 +14,13 @@ namespace UnityAtoms
         [SerializeField]
         [TextArea(3, 6)]
         private string _developerDescription;
+
+        public string Description
+        {
+            get
+            {
+                return _developerDescription;
+            }
+        }
     }
 }
