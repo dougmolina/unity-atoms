@@ -27,41 +27,36 @@ namespace UnityAtoms
         /// Get or set the value for the Reference.
         /// </summary>
         /// <value>The value of type `T`.</value>
-        
+
         public T Value
         {
-            get
+            get => _usage switch
             {
-                switch (_usage)
-                {
-                    case (AtomReferenceUsage.CONSTANT): return _constant == null ? default(T) : _constant.Value;
-                    case (AtomReferenceUsage.VARIABLE): return _variable == null ? default(T) : _variable.Value;
-                    case (AtomReferenceUsage.VARIABLE_INSTANCER): return _variableInstancer == null || _variableInstancer.Variable == null ? default(T) : _variableInstancer.Value;
-                    case (AtomReferenceUsage.VALUE):
-                    default:
-                        return _value;
-                }
-            }
+                AtomReferenceUsage.CONSTANT => _constant == null ? default : _constant.Value,
+                AtomReferenceUsage.VARIABLE => _variable == null ? default : _variable.Value,
+                AtomReferenceUsage.VARIABLE_INSTANCER => _variableInstancer == null || _variableInstancer.Variable == null ? default : _variableInstancer.Value,
+                _ => _value,
+            };
             set
             {
                 switch (_usage)
                 {
-                    case (AtomReferenceUsage.VARIABLE):
+                    case AtomReferenceUsage.VARIABLE:
                         {
                             _variable.Value = value;
                             break;
                         }
-                    case (AtomReferenceUsage.VALUE):
+                    case AtomReferenceUsage.VALUE:
                         {
                             _value = value;
                             break;
                         }
-                    case (AtomReferenceUsage.VARIABLE_INSTANCER):
+                    case AtomReferenceUsage.VARIABLE_INSTANCER:
                         {
                             _variableInstancer.Value = value;
                             break;
                         }
-                    case (AtomReferenceUsage.CONSTANT):
+                    case AtomReferenceUsage.CONSTANT:
                     default:
                         throw new NotSupportedException("Can't reassign constant value");
                 }
@@ -69,56 +64,61 @@ namespace UnityAtoms
         }
 
         /// <returns>True if the `Usage` is an AtomType and is unassigned. False otherwise.</returns>
-        
+
         public T GetValue()
         {
             return Value;
         }
-        
+
         public void SetValue(T value)
         {
             _value = value;
         }
 
-        
-        public bool IsUnassigned
+
+        public bool IsUnassigned => _usage switch
         {
-            get
-            {
-                switch (_usage)
-                {
-                    case (AtomReferenceUsage.CONSTANT): return _constant == null;
-                    case (AtomReferenceUsage.VARIABLE): return _variable == null;
-                    case (AtomReferenceUsage.VARIABLE_INSTANCER): return _variableInstancer == null || _variableInstancer.Variable == null;
-                }
-                return false;
-            }
-        }
+            AtomReferenceUsage.CONSTANT => _constant == null,
+            AtomReferenceUsage.VARIABLE => _variable == null,
+            AtomReferenceUsage.VARIABLE_INSTANCER => _variableInstancer == null || _variableInstancer.Variable == null,
+            _ => false,
+        };
 
         /// <summary>
         /// Value used if `Usage` is set to `Value`.
         /// </summary>
         [SerializeField]
-        private T _value = default(T);
+        private T _value = default;
 
         /// <summary>
         /// Constant used if `Usage` is set to `Constant`.
         /// </summary>
         [SerializeField]
-        private C _constant = default(C);
+        private C _constant = default;
+        public C GetConstant()
+        {
+            return _constant;
+        }
 
         /// <summary>
         /// Variable used if `Usage` is set to `Variable`.
         /// </summary>
         [SerializeField]
-        private V _variable = default(V);
+        private V _variable = default;
+        public V GetVariable()
+        {
+            return _variable;
+        }
 
         /// <summary>
         /// Variable Instancer used if `Usage` is set to `VariableInstancer`.
         /// </summary>
         [SerializeField]
-        private VI _variableInstancer = default(VI);
-        public VI VariableInstancer => _variableInstancer;
+        private VI _variableInstancer = default;
+        public VI GetInstancer()
+        {
+            return _variableInstancer;
+        }
 
         protected AtomReference()
         {
@@ -140,10 +140,7 @@ namespace UnityAtoms
 
         public bool Equals(AtomReference<T, P, C, V, E1, E2, F, VI> other)
         {
-            if (other == null)
-                return false;
-
-            return ValueEquals(other.Value);
+            return other != null && ValueEquals(other.Value);
         }
 
         public override int GetHashCode()
@@ -160,16 +157,16 @@ namespace UnityAtoms
         {
             switch (_usage)
             {
-                case (AtomReferenceUsage.VARIABLE):
+                case AtomReferenceUsage.VARIABLE:
                     {
                         return _variable.GetEvent<E>();
                     }
-                case (AtomReferenceUsage.VARIABLE_INSTANCER):
+                case AtomReferenceUsage.VARIABLE_INSTANCER:
                     {
                         return _variableInstancer.GetEvent<E>();
                     }
-                case (AtomReferenceUsage.VALUE):
-                case (AtomReferenceUsage.CONSTANT):
+                case AtomReferenceUsage.VALUE:
+                case AtomReferenceUsage.CONSTANT:
                 default:
                     throw new Exception($"Can't retrieve Event when usages is set to '{AtomReferenceUsage.DisplayName(_usage)}'! Usage needs to be set to '{AtomReferenceUsage.DisplayName(AtomReferenceUsage.VARIABLE)}' or '{AtomReferenceUsage.DisplayName(AtomReferenceUsage.VARIABLE_INSTANCER)}'.");
             }
@@ -184,18 +181,18 @@ namespace UnityAtoms
         {
             switch (_usage)
             {
-                case (AtomReferenceUsage.VARIABLE):
+                case AtomReferenceUsage.VARIABLE:
                     {
                         _variable.SetEvent<E>(e);
                         return;
                     }
-                case (AtomReferenceUsage.VARIABLE_INSTANCER):
+                case AtomReferenceUsage.VARIABLE_INSTANCER:
                     {
                         _variableInstancer.SetEvent<E>(e);
                         return;
                     }
-                case (AtomReferenceUsage.VALUE):
-                case (AtomReferenceUsage.CONSTANT):
+                case AtomReferenceUsage.VALUE:
+                case AtomReferenceUsage.CONSTANT:
                 default:
                     throw new Exception($"Can't set Event when usages is set to '{AtomReferenceUsage.DisplayName(_usage)}'! Usage needs to be set to '{AtomReferenceUsage.DisplayName(AtomReferenceUsage.VARIABLE)}' or '{AtomReferenceUsage.DisplayName(AtomReferenceUsage.VARIABLE_INSTANCER)}'.");
             }
