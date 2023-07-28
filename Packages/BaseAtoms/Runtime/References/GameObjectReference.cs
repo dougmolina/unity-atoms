@@ -24,9 +24,6 @@ namespace UnityAtoms.BaseAtoms
         {
             return Value == other;
         }
-        public override void SetReferenceValue(object value)
-        {
-            Value = (GameObject)value;
-        }
+        public override void SetReferenceValue(object value) { Value = (GameObject)value; }
     }
 }
