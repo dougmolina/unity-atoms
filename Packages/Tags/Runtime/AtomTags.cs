@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -18,82 +19,69 @@ namespace UnityAtoms.Tags
         /// Get the tags associated with this GameObject as `StringConstants` in a `ReadOnlyList&lt;T&gt;`.
         /// </summary>
         /// <value>The tags associated with this GameObject as `StringConstants` in a `ReadOnlyList&lt;T&gt;`.</value>
-        public ReadOnlyList<StringConstant> Tags
-        {
-            get
-            {
-                return new(_tags);
-            }
-            private set
-            {
-                _readOnlyTags = value;
-            }
-        }
+        public ReadOnlyList<StringConstant> Tags { get => new(_tags); private set => _readOnlyTags = value; }
 
         private ReadOnlyList<StringConstant> _readOnlyTags;
 
         [SerializeField]
         private List<StringConstant> _tags = new();
 
-        private static readonly Dictionary<string, List<GameObject>> TaggedGameObjects = new();
+        static private readonly Dictionary<string, List<GameObject>> TaggedGameObjects = new();
 
-        private static readonly Dictionary<GameObject, AtomTags> TagInstances = new();
-        private static Action _onInitialization;
+        static private readonly Dictionary<GameObject, AtomTags> TagInstances = new();
+        static private Action _onInitialization;
 
-        #region Lifecycles
+#region Lifecycles
+
         private void OnEnable()
         {
-            if (!IsInitialized(gameObject))
+            if (IsInitialized(gameObject)) return;
+
+            TaggedGameObjects.Clear();
+            TagInstances.Clear();
+            AtomTags[] atomTagsInScene = FindObjectsOfType<AtomTags>();
+
+            for (int i = 0; i < atomTagsInScene.Length; ++i)
             {
-                TaggedGameObjects.Clear();
-                TagInstances.Clear();
-                AtomTags[] _atomTagsInScene = FindObjectsOfType<AtomTags>();
+                AtomTags atomTags = atomTagsInScene[i];
+                int tagCount = atomTags.Tags.Count;
+                GameObject go = atomTagsInScene[i].gameObject;
+                TagInstances.TryAdd(go, atomTags);
 
-                for (int i = 0; i < _atomTagsInScene.Length; ++i)
+                for (int y = 0; y < tagCount; ++y)
                 {
-                    AtomTags atomTags = _atomTagsInScene[i];
-                    int tagCount = atomTags.Tags.Count;
-                    GameObject go = _atomTagsInScene[i].gameObject;
-                    if (!TagInstances.ContainsKey(go)) TagInstances.Add(go, atomTags);
-                    for (int y = 0; y < tagCount; ++y)
-                    {
-                        StringConstant stringConstant = atomTags.Tags[y];
-                        if (stringConstant == null) continue;
-                        string tag = stringConstant.Value;
-                        if (!TaggedGameObjects.ContainsKey(tag)) TaggedGameObjects.Add(tag, new());
-                        TaggedGameObjects[tag].Add(go);
-                    }
+                    StringConstant stringConstant = atomTags.Tags[y];
+                    if (stringConstant == null) continue;
+                    string tag = stringConstant.Value;
+                    if (!TaggedGameObjects.ContainsKey(tag)) TaggedGameObjects.Add(tag, new());
+                    TaggedGameObjects[tag].Add(go);
                 }
-
-                _onInitialization?.Invoke();
-                _onInitialization = null;
             }
+
+            _onInitialization?.Invoke();
+            _onInitialization = null;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             if (TagInstances.ContainsKey(gameObject)) TagInstances.Remove(gameObject);
-            for (int i = 0; i < Tags.Count; i++)
+            foreach (StringConstant stringConstant in Tags)
             {
-                StringConstant stringConstant = Tags[i];
                 if (stringConstant == null) continue;
                 string tag = stringConstant.Value;
-                if (TaggedGameObjects.ContainsKey(tag)) TaggedGameObjects[tag].Remove(gameObject);
+                if (TaggedGameObjects.TryGetValue(tag, out List<GameObject> gameObjects)) gameObjects.Remove(gameObject);
             }
         }
-        #endregion
 
-        public static void OnInitialization(Action handler)
+#endregion
+
+        static public void OnInitialization(Action handler)
         {
             AtomTags atomTags = FindObjectOfType<AtomTags>();
             if (atomTags != null && !IsInitialized(atomTags.gameObject))
-            {
                 _onInitialization += handler;
-            }
             else
-            {
                 handler();
-            }
         }
 
         /// <summary>
@@ -145,23 +133,25 @@ namespace UnityAtoms.Tags
         /// Find first `GameObject` that has the tag provided.
         /// </summary>
         /// <param name="tag">The tag that the `GameObject` that you search for will have.</param>
+        /// <param name="includeInactive">Is it suppose to add inactive GameObjects?</param>
         /// <returns>The first `GameObject` with the provided tag found. If no `GameObject`is found, it returns `null`.</returns>
-        public static GameObject FindByTag(string tag)
+        static public GameObject FindByTag(string tag, bool includeInactive = false)
         {
             if (!TaggedGameObjects.ContainsKey(tag)) return null;
             if (TaggedGameObjects[tag].Count < 1) return null;
-            return TaggedGameObjects[tag][0];
+            return includeInactive ? TaggedGameObjects[tag][0] : TaggedGameObjects[tag].FirstOrDefault(entry => entry.activeSelf);
         }
 
         /// <summary>
         /// Find all `GameObject`s that have the tag provided.
         /// </summary>
         /// <param name="tag">The tag that the `GameObject`s that you search for will have.</param>
+        /// <param name="includeInactive">Is it suppose to add inactive GameObjects?</param>
         /// <returns>An array of `GameObject`s with the provided tag. If not found it returns `null`.</returns>
-        public static GameObject[] FindAllByTag(string tag)
+        static public GameObject[] FindAllByTag(string tag, bool includeInactive = false)
         {
             if (!TaggedGameObjects.ContainsKey(tag)) return null;
-            return TaggedGameObjects[tag].ToArray();
+            return includeInactive ? TaggedGameObjects[tag].ToArray() : TaggedGameObjects[tag].Where(entry => entry.activeSelf).ToArray();
         }
 
         /// <summary>
@@ -169,14 +159,11 @@ namespace UnityAtoms.Tags
         /// </summary>
         /// <param name="tag">The tag that the `GameObject`s that you search for will have.</param>
         /// <param name="output">A `List&lt;GameObject&gt;` that this method will clear and add the `GameObject`s found to.</param>
-        public static void FindAllByTagNoAlloc(string tag, List<GameObject> output)
+        static public void FindAllByTagNoAlloc(string tag, List<GameObject> output)
         {
             output.Clear();
             if (!TaggedGameObjects.ContainsKey(tag)) return;
-            for (int i = 0; i < TaggedGameObjects[tag].Count; ++i)
-            {
-                output.Add(TaggedGameObjects[tag][i]);
-            }
+            for (int i = 0; i < TaggedGameObjects[tag].Count; ++i) output.Add(TaggedGameObjects[tag][i]);
         }
 
         /// <summary>
@@ -185,7 +172,7 @@ namespace UnityAtoms.Tags
         /// <returns>
         /// Returns the `UATags` component. Returns `null` if the `GameObject` does not have a `UATags` component or if the `GameObject` is disabled.
         /// </returns>
-        public static AtomTags GetTagsForGameObject(GameObject go)
+        static public AtomTags GetTagsForGameObject(GameObject go)
         {
             if (!TagInstances.ContainsKey(go)) return null;
             return TagInstances[go];
@@ -198,16 +185,13 @@ namespace UnityAtoms.Tags
         /// <returns>
         /// A `ReadOnlyList&lt;T&gt;` of tags stored as `StringContant`s. Returns `null` if the `GameObject` does not have any tags or if the `GameObject` is disabled.
         /// </returns>
-        public static ReadOnlyList<StringConstant> GetTags(GameObject go)
+        static public ReadOnlyList<StringConstant> GetTags(GameObject go)
         {
             if (!TagInstances.ContainsKey(go)) return null;
             AtomTags tags = TagInstances[go];
             return tags.Tags;
         }
 
-        private static bool IsInitialized(GameObject go)
-        {
-            return TagInstances.ContainsKey(go);
-        }
+        static private bool IsInitialized(GameObject go) { return TagInstances.ContainsKey(go); }
     }
 }
