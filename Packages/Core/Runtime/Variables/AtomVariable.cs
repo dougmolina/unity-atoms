@@ -47,7 +47,6 @@ namespace UnityAtoms
         [SerializeField]
         [FormerlySerializedAs("Changed")]
         private E1 _changed;
-        private bool _changedInstantiatedAtRuntime;
         public E1 Changed
         {
             get
@@ -67,7 +66,6 @@ namespace UnityAtoms
         [SerializeField]
         [FormerlySerializedAs("ChangedWithHistory")]
         private E2 _changedWithHistory;
-        private bool _changedWithHistoryInstantiatedAtRuntime;
         public E2 ChangedWithHistory
         {
             get
@@ -140,7 +138,7 @@ namespace UnityAtoms
             _value = RunPreChangeTransformers(_value);
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             SetInitialValues();
             TriggerInitialEvents();
@@ -158,8 +156,13 @@ namespace UnityAtoms
 
         private void OnDisable()
         {
-            if (_changedInstantiatedAtRuntime) _changed = null;
-            if (_changedWithHistoryInstantiatedAtRuntime) _changedWithHistory = null;
+            // NOTE: This will not be called when deleting the Atom from the editor.
+            // Therefore, there might still be null instances, but even though not ideal,
+            // it should not cause any problems.
+            // More info: https://issuetracker.unity3d.com/issues/ondisable-and-ondestroy-methods-are-not-called-when-a-scriptableobject-is-deleted-manually-in-project-window 
+#if UNITY_EDITOR
+            _instances.Remove(this);
+#endif
         }
 
         /// <summary>
@@ -169,9 +172,6 @@ namespace UnityAtoms
         {
             _oldValue = InitialValue;
             _value = InitialValue;
-
-            _changedInstantiatedAtRuntime = false;
-            _changedWithHistoryInstantiatedAtRuntime = false;
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace UnityAtoms
             }
             if (_triggerChangedWithHistoryOnOnEnable)
             {
-                if(ChangedWithHistory == null)
+                if (ChangedWithHistory == null)
                     GetOrCreateEvent<E2>();
 
                 var pair = default(P);
@@ -202,14 +202,14 @@ namespace UnityAtoms
 #if UNITY_EDITOR
         private static void HandlePlayModeStateChange(PlayModeStateChange state)
         {
-            if (state == PlayModeStateChange.ExitingEditMode)
+            if (state == PlayModeStateChange.ExitingEditMode)  // BEFORE any GO is initialized:
             {
                 foreach (var instance in _instances)
                 {
                     instance.SetInitialValues();
                 }
             }
-            else if (state == PlayModeStateChange.EnteredPlayMode)
+            else if (state == PlayModeStateChange.EnteredPlayMode)  // within/end of the first frame
             {
                 foreach (var instance in _instances)
                 {
@@ -390,7 +390,6 @@ namespace UnityAtoms
                 {
                     _changed = ScriptableObject.CreateInstance<E1>();
                     _changed.name = $"{(String.IsNullOrWhiteSpace(name) ? "" : $"{name}_")}ChangedEvent_Runtime_{typeof(E1)}";
-                    _changedInstantiatedAtRuntime = true;
                 }
 
                 return _changed as E;
@@ -401,7 +400,6 @@ namespace UnityAtoms
                 {
                     _changedWithHistory = ScriptableObject.CreateInstance<E2>();
                     _changedWithHistory.name = $"{(String.IsNullOrWhiteSpace(name) ? "" : $"{name}_")}ChangedWithHistoryEvent_Runtime_{typeof(E2)}";
-                    _changedWithHistoryInstantiatedAtRuntime = true;
                 }
 
                 return _changedWithHistory as E;

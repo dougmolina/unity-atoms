@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace UnityAtoms
@@ -35,17 +38,53 @@ namespace UnityAtoms
 
         private Queue<T> _replayBuffer = new Queue<T>();
 
-        private void OnDisable()
+#if UNITY_EDITOR
+        /// <summary>
+        /// Set of all AtomVariable instances in editor.
+        /// </summary>
+        private static HashSet<AtomEvent<T>> _instances = new HashSet<AtomEvent<T>>();
+#endif
+
+        private void OnEnable()
         {
-            // Clear all delegates when exiting play mode
-            if (_onEvent != null)
+#if UNITY_EDITOR
+            if (EditorSettings.enterPlayModeOptionsEnabled)
             {
-                var invocationList = _onEvent.GetInvocationList();
-                foreach (var d in invocationList)
+                _instances.Add(this);
+
+                EditorApplication.playModeStateChanged -= HandlePlayModeStateChange;
+                EditorApplication.playModeStateChanged += HandlePlayModeStateChange;
+            }
+#endif
+        }
+
+
+#if UNITY_EDITOR
+        private static void HandlePlayModeStateChange(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode // BEFORE any GO is initialized:
+                || state == PlayModeStateChange.EnteredEditMode) // AFTER Playmode stopped
+            {
+                foreach (var instance in _instances)
                 {
-                    _onEvent -= (Action<T>)d;
+                    instance._replayBuffer.Clear();
+                    instance.UnregisterAll();
                 }
             }
+        }
+#endif
+
+        private void OnDisable()
+        {
+            // NOTE: This will not be called when deleting the Atom from the editor.
+            // Therefore, there might still be null instances, but even though not ideal,
+            // it should not cause any problems.
+            // More info: https://issuetracker.unity3d.com/issues/ondisable-and-ondestroy-methods-are-not-called-when-a-scriptableobject-is-deleted-manually-in-project-window
+#if UNITY_EDITOR
+            _instances.Remove(this);
+#endif
+            // Clear all delegates when exiting play mode
+            UnregisterAll();
         }
 
         /// <summary>

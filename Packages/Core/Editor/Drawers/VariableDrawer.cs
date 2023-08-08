@@ -17,18 +17,24 @@ namespace UnityAtoms.Editor
             label = EditorGUI.BeginProperty(position, label, property);
             position = EditorGUI.PrefixLabel(position, label);
 
-            SerializedObject inner = new SerializedObject(property.objectReferenceValue);
-            SerializedProperty valueProp = inner.FindProperty("_value");
-            float width = GetPreviewSpace(valueProp.type);
-            Rect previewRect = new(position);
-            previewRect.width = GetPreviewSpace(valueProp.type);
+            var inner = new SerializedObject(property.objectReferenceValue);
+            var valueProp = inner.FindProperty("_value");
+            Rect previewRect = new Rect(position);
+            previewRect.width = GetPreviewSpace(valueProp?.type);
             position.xMin = previewRect.xMax;
 
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUI.PropertyField(previewRect, valueProp, GUIContent.none, false);
+            if (valueProp != null)
+            {
+                EditorGUI.PropertyField(previewRect, valueProp, GUIContent.none, false);
+            }
+            else
+            {
+                EditorGUI.LabelField(previewRect, "[Non serialized value]");
+            }
             EditorGUI.EndDisabledGroup();
 
             position.x = position.x + 6f;
