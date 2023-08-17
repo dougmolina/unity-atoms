@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace UnityAtoms.BaseAtoms
 {
@@ -16,12 +17,12 @@ namespace UnityAtoms.BaseAtoms
         BoolBoolFunction,
         BoolVariableInstancer>, IEquatable<BoolReference>
     {
-        public BoolReference() : base() { }
+        public BoolReference() { }
+
         public BoolReference(bool value) : base(value) { }
+
         public bool Equals(BoolReference other) { return base.Equals(other); }
-        public override void SetReferenceValue(object value)
-        {
-            Value = value == default ? default : (bool)value;
-        }
+
+        public override void SetReferenceValue(object value) { Value = value != null && (bool) value; }
     }
 }
