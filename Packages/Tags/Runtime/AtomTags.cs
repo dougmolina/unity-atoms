@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
+
 #if UNITY_EDITOR
 #endif
 
@@ -30,6 +30,8 @@ namespace UnityAtoms.Tags
 
         static private readonly Dictionary<GameObject, AtomTags> TagInstances = new();
         static private Action _onInitialization;
+
+        static private List<GameObject> _returnList = new();
 
 #region Lifecycles
 
@@ -139,7 +141,18 @@ namespace UnityAtoms.Tags
         {
             if (!TaggedGameObjects.ContainsKey(tag)) return null;
             if (TaggedGameObjects[tag].Count < 1) return null;
-            return includeInactive ? TaggedGameObjects[tag][0] : TaggedGameObjects[tag].FirstOrDefault(entry => entry.activeSelf);
+
+            _returnList.Clear();
+
+            foreach (GameObject gameObject in TaggedGameObjects[tag])
+                if (gameObject.activeInHierarchy)
+                    _returnList.Add(gameObject);
+
+            return includeInactive
+                ? TaggedGameObjects[tag][0]
+                : _returnList.Count > 0
+                    ? _returnList[0]
+                    : null;
         }
 
         /// <summary>
@@ -148,10 +161,19 @@ namespace UnityAtoms.Tags
         /// <param name="tag">The tag that the `GameObject`s that you search for will have.</param>
         /// <param name="includeInactive">Is it suppose to add inactive GameObjects?</param>
         /// <returns>An array of `GameObject`s with the provided tag. If not found it returns `null`.</returns>
-        static public GameObject[] FindAllByTag(string tag, bool includeInactive = false)
+        static public List<GameObject> FindAllByTag(string tag, bool includeInactive = false)
         {
             if (!TaggedGameObjects.ContainsKey(tag)) return null;
-            return includeInactive ? TaggedGameObjects[tag].ToArray() : TaggedGameObjects[tag].Where(entry => entry.activeSelf).ToArray();
+
+            if (includeInactive) { _returnList = TaggedGameObjects[tag]; } else
+            {
+                _returnList.Clear();
+                foreach (GameObject gameObject in TaggedGameObjects[tag])
+                    if (gameObject.activeInHierarchy)
+                        _returnList.Add(gameObject);
+            }
+
+            return _returnList;
         }
 
         /// <summary>
