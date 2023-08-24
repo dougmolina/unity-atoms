@@ -39,25 +39,15 @@ namespace UnityAtoms.Tags
         {
             if (IsInitialized(gameObject)) return;
 
-            TaggedGameObjects.Clear();
-            TagInstances.Clear();
-            AtomTags[] atomTagsInScene = FindObjectsOfType<AtomTags>();
+            TagInstances.Add(gameObject, this);
 
-            for (int i = 0; i < atomTagsInScene.Length; ++i)
+            for (int i = 0; i < Tags.Count; i++)
             {
-                AtomTags atomTags = atomTagsInScene[i];
-                int tagCount = atomTags.Tags.Count;
-                GameObject go = atomTagsInScene[i].gameObject;
-                TagInstances.TryAdd(go, atomTags);
-
-                for (int y = 0; y < tagCount; ++y)
-                {
-                    StringConstant stringConstant = atomTags.Tags[y];
-                    if (stringConstant == null) continue;
-                    string tag = stringConstant.Value;
-                    if (!TaggedGameObjects.ContainsKey(tag)) TaggedGameObjects.Add(tag, new());
-                    TaggedGameObjects[tag].Add(go);
-                }
+                StringConstant stringConstant = Tags[i];
+                if (stringConstant == null) continue;
+                string tag = stringConstant.Value;
+                if (!TaggedGameObjects.ContainsKey(tag)) TaggedGameObjects.Add(tag, new());
+                TaggedGameObjects[tag].Add(gameObject);
             }
 
             _onInitialization?.Invoke();
