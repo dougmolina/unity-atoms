@@ -54,5 +54,26 @@ namespace UnityAtoms.Tags
             }
             return false;
         }
+
+        /// <summary>
+        /// Check if all tags provided are associated with this `GameObject`.
+        /// </summary>
+        /// <param name="go">This `GameObject`</param>
+        /// <param name="tags">The tags to search for.</param>
+        /// <returns>`true` if all tags exist, otherwise `false`.</returns>
+        public static bool HasAllTags(this GameObject go, List<StringConstant> stringConstants)
+        {
+            // basically same method as above, the code is mostly copy and pasted because its not preferable to convert
+            // stringconstants to strings and calling the other method, because of memory allocation
+            AtomTags tags = AtomTags.GetTagsForGameObject(go);
+            if (tags == null) return true;
+
+            for (int i = 0; i < stringConstants.Count; i++)
+            {
+                if (!tags.HasTag(stringConstants[i])) return false;
+            }
+
+            return true;
+        }
     }
 }
