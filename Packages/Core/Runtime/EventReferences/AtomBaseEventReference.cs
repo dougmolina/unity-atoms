@@ -92,7 +92,7 @@ namespace UnityAtoms
         {
             if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
             {
-                _eventInstancer?.Base?.Raise();
+                _eventInstancer?.RaiseBase();
             }
 
             Event?.Raise();
