@@ -4,6 +4,80 @@ using UnityEngine;
 namespace UnityAtoms
 {
     /// <summary>
+    /// An Event Reference lets you define an event in your script where you then from the inspector can choose if it's going to use the Event from an Event, Event Instancer.
+    /// </summary>
+    [Serializable]
+    public class AtomEventReference : AtomBaseEventReference
+    {
+        /// <summary>
+        /// Get the event for the Event Reference.
+        /// </summary>
+        /// <value>The event of type `E`.</value>
+        public virtual AtomEventBase Event
+        {
+            get
+            {
+                switch (_usage)
+                {
+                    case AtomEventReferenceUsage.EVENT_INSTANCER:
+                        return _eventInstancer.EventNoValue;
+
+                    case AtomEventReferenceUsage.EVENT:
+                    default:
+                        return _event;
+                }
+            }
+            set
+            {
+                switch (_usage)
+                {
+                    case AtomEventReferenceUsage.EVENT:
+                    {
+                        _event = value;
+                        break;
+                    }
+
+                    default:
+                        throw new NotSupportedException($"Event not reassignable for usage {_usage}.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Event used if `Usage` is set to `Event`.
+        /// </summary>
+        [SerializeField]
+        protected AtomEventBase _event;
+
+        /// <summary>
+        /// EventInstancer used if `Usage` is set to `EventInstancer`.
+        /// </summary>
+        [SerializeField]
+        protected AtomBaseEventInstancer _eventInstancer = default;
+
+
+        public void Raise()
+        {
+            if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
+            {
+                _eventInstancer?.RaiseBase();
+            }
+
+            Event?.Raise();
+        }
+
+        protected AtomEventReference()
+        {
+            _usage = AtomEventReferenceUsage.EVENT;
+        }
+
+        static public implicit operator AtomEventBase(AtomEventReference reference)
+        {
+            return reference.Event;
+        }
+    }
+
+    /// <summary>
     /// An Event Reference lets you define an event in your script where you then from the inspector can choose if it's going to use the Event from an Event, Event Instancer, Variable or a Variable Instancer.
     /// </summary>
     /// <typeparam name="T">The type of the event.</typeparam>
