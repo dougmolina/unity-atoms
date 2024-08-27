@@ -25,7 +25,7 @@ namespace UnityAtoms.BaseAtoms
             set => ((V)_inMemoryCopy).Removed = value;
         }
 
-        public VoidEvent Cleared
+        public AtomEventBase Cleared
         {
             get => ((V)_inMemoryCopy).Cleared;
             set => ((V)_inMemoryCopy).Cleared = value;

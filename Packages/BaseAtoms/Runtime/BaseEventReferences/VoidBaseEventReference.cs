@@ -16,16 +16,13 @@ namespace UnityAtoms.BaseAtoms
     /// Event Reference of type `Void`. Inherits from `AtomBaseEventReference&lt;Void, VoidEvent, VoidEventInstancer&gt;`.
     /// </summary>
     [Serializable]
-    public sealed class VoidBaseEventReference : AtomBaseEventReference<
-        Void,
-        VoidEvent,
-        VoidEventInstancer>, IGetEvent
+    public sealed class VoidBaseEventReference : AtomBaseEventReference
     {
         /// <summary>
         /// Get or set the Event used by the Event Reference.
         /// </summary>
         /// <value>The event of type `E`.</value>
-        public override VoidEvent Event
+        public AtomEventBase Event
         {
             get
             {
@@ -35,7 +32,7 @@ namespace UnityAtoms.BaseAtoms
                     case (VoidBaseEventReferenceUsage.LIST_CLEARED_EVENT): return _list != null ? _list.Cleared : null;
                     case (VoidBaseEventReferenceUsage.COLLECTION_INSTANCER_CLEARED_EVENT): return _collectionInstancer != null ? _collectionInstancer.Cleared : null;
                     case (VoidBaseEventReferenceUsage.LIST_INSTANCER_CLEARED_EVENT): return _listInstancer != null ? _listInstancer.Cleared : null;
-                    case (VoidBaseEventReferenceUsage.EVENT_INSTANCER): return _eventInstancer != null ? _eventInstancer.Event : null;
+                    case (VoidBaseEventReferenceUsage.EVENT_INSTANCER): return _eventInstancer != null ? _eventInstancer.EventNoValue : null;
                     case (VoidBaseEventReferenceUsage.EVENT):
                     default:
                         return _event;
@@ -75,6 +72,38 @@ namespace UnityAtoms.BaseAtoms
                 }
             }
         }
+
+        public void Raise()
+        {
+            if (_usage == AtomEventReferenceUsage.EVENT_INSTANCER)
+            {
+                _eventInstancer?.RaiseBase();
+            }
+
+            Event?.Raise();
+        }
+
+        public VoidBaseEventReference()
+        {
+            _usage = AtomEventReferenceUsage.EVENT;
+        }
+
+        static public implicit operator AtomEventBase(VoidBaseEventReference reference)
+        {
+            return reference.Event;
+        }
+
+        /// <summary>
+        /// Event used if `Usage` is set to `Event`.
+        /// </summary>
+        [SerializeField]
+        protected AtomEventBase _event;
+
+        /// <summary>
+        /// EventInstancer used if `Usage` is set to `EventInstancer`.
+        /// </summary>
+        [SerializeField]
+        protected AtomBaseEventInstancer _eventInstancer = default;
 
         /// <summary>
         /// Collection used if `Usage` is set to `COLLECTION_CLEARED_EVENT`.

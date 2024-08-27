@@ -24,6 +24,10 @@ namespace UnityAtoms
         /// Getter for retrieving the in memory runtime Event.
         /// </summary>
         public E Event { get => _inMemoryCopy; }
+
+        /// <summary>
+        /// Getter for retrieving the base Event.
+        /// </summary>
         public E Base { get => _base; }
 
         [SerializeField]
@@ -96,7 +100,7 @@ namespace UnityAtoms
         }
 
         /// <summary>
-        /// Raises the instanced Event.
+        /// Raises the base Event.
         /// </summary>
         public override void RaiseBase()
         {

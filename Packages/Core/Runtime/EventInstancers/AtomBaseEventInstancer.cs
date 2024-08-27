@@ -24,7 +24,7 @@ namespace UnityAtoms
         public abstract void Raise();
 
         /// <summary>
-        /// Raises the base instanced Event.
+        /// Raises the base Event.
         /// </summary>
         public abstract void RaiseBase();
 

@@ -30,7 +30,7 @@ namespace UnityAtoms.BaseAtoms
         /// <summary>
         /// Event for when the list is cleared.
         /// </summary>
-        public VoidEvent Cleared { get => _cleared; set => _cleared = value; }
+        public AtomEventBase Cleared { get => _cleared; set => _cleared = value; }
 
 
         [SerializeField]
@@ -40,7 +40,7 @@ namespace UnityAtoms.BaseAtoms
         private AtomBaseVariableEvent _removed;
 
         [SerializeField]
-        private VoidEvent _cleared;
+        private AtomEventBase _cleared;
 
         void OnEnable()
         {

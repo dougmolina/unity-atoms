@@ -10,6 +10,6 @@ namespace UnityAtoms.BaseAtoms
     {
         AtomBaseVariableEvent Added { get; set; }
         AtomBaseVariableEvent Removed { get; set; }
-        VoidEvent Cleared { get; set; }
+        AtomEventBase Cleared { get; set; }
     }
 }
