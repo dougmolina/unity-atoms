@@ -10,6 +10,19 @@ namespace UnityAtoms.Tags
     public static class GameObjectExtensions
     {
         /// <summary>
+        /// Add a tag for a given `GameObject`.
+        /// </summary>
+        /// <param name="go">This `GameObject`</param>
+        /// <param name="tag">The tag to add as a `StringContant`.</param>
+        public static void AddTag(this GameObject go, StringConstant tag)
+        {
+            AtomTags tags = AtomTags.GetTagsForGameObject(go);
+            if (tags == null) return;
+
+            tags.AddTag(tag);
+        }
+
+        /// <summary>
         /// Retrieves all tags for a given `GameObject`. A faster alternative to `gameObject.GetComponen&lt;UATags&gt;().Tags`.
         /// </summary>
         /// <param name="go">This `GameObject`</param>
@@ -48,7 +61,7 @@ namespace UnityAtoms.Tags
             AtomTags tags = AtomTags.GetTagsForGameObject(go);
             if (tags == null) return false;
 
-            for (int i = 0; i < stringConstants.Count; i++)
+            for (var i = 0; i < stringConstants.Count; i++)
             {
                 if (tags.HasTag(stringConstants[i])) return true;
             }
@@ -68,7 +81,7 @@ namespace UnityAtoms.Tags
             AtomTags tags = AtomTags.GetTagsForGameObject(go);
             if (tags == null) return true;
 
-            for (int i = 0; i < stringConstants.Count; i++)
+            for (var i = 0; i < stringConstants.Count; i++)
             {
                 if (!tags.HasTag(stringConstants[i])) return false;
             }
