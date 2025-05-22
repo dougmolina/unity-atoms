@@ -1,3 +1,4 @@
+#if UNITY_NETCODE
 using System;
 using UnityEngine;
 
@@ -18,3 +19,4 @@ namespace UnityAtoms.BaseAtoms.Network
         Vector2VariableInstancer,
         Vector2Reference> { }
 }
+#endif

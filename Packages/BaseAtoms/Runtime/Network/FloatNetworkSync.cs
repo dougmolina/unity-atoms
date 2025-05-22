@@ -1,3 +1,4 @@
+#if UNITY_NETCODE
 using System;
 
 namespace UnityAtoms.BaseAtoms.Network
@@ -17,3 +18,4 @@ namespace UnityAtoms.BaseAtoms.Network
         FloatVariableInstancer,
         FloatReference> { }
 }
+#endif

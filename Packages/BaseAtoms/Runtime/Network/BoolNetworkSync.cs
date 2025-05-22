@@ -1,3 +1,4 @@
+#if UNITY_NETCODE
 using System;
 using UnityAtoms.BaseAtoms.Network;
 
@@ -18,3 +19,4 @@ namespace UnityAtoms.BaseAtoms.Network
         BoolVariableInstancer,
         BoolReference> { }
 }
+#endif

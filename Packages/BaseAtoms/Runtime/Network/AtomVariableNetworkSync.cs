@@ -1,3 +1,4 @@
+#if UNITY_NETCODE
 using System;
 using Unity.Netcode;
 
@@ -74,3 +75,4 @@ namespace UnityAtoms.BaseAtoms.Network
         }
     }
 }
+#endif
